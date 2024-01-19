@@ -1,0 +1,56 @@
+:root {
+    --color-brand: #f85a40;
+    --color-background: #ffffff;
+    --color-background-soft: #f8f8f8;
+    --color-background-mute: #f2f2f2;
+
+    --color-border: rgba(60, 60, 60, 0.12);
+    --color-border-hover: rgba(60, 60, 60, 0.29);
+
+    --color-heading: #ffffff;
+    --color-text: #282828;
+
+    --border-radius: 0.35rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #181818;
+        --color-background-soft: #222222;
+        --color-background-mute: #282828;
+
+        --color-border: rgba(84, 84, 84, 0.48);
+        --color-border-hover: rgba(84, 84, 84, 0.65);
+
+        --color-heading: #181818;
+        --color-text: #f2f2f2;
+    }
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    color: var(--color-text);
+    background: var(--color-background);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
