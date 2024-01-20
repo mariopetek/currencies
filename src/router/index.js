@@ -7,10 +7,12 @@ const router = createRouter({
     routes: [
         {
             path: '/',
+            name: 'converter',
             component: ConverterView
         },
         {
             path: '/rates',
+            name: 'rates',
             // route level code-splitting
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -18,6 +20,7 @@ const router = createRouter({
         },
         {
             path: '/:pathMatch(.*)*',
+            name: 'not-found',
             component: NotFoundView
         }
     ]

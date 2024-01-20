@@ -14,6 +14,7 @@ import NavHeader from './components/NavHeader.vue'
 .container {
     flex: 1;
     max-width: 1024px;
+    width: 100%;
     margin: 0 auto;
     padding: 1rem 2rem;
 }

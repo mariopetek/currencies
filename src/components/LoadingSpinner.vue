@@ -10,7 +10,7 @@
     width: 2.5rem;
     height: 2.5rem;
     animation: spin 1s linear infinite;
-    margin: auto;
+    margin: 2rem auto;
 }
 @keyframes spin {
     0% {
