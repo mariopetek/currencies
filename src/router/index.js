@@ -8,11 +8,13 @@ const router = createRouter({
         {
             path: '/',
             name: 'converter',
+            meta: { title: 'Currencies | Converter' },
             component: ConverterView
         },
         {
             path: '/rates',
             name: 'rates',
+            meta: { title: 'Currencies | Rates' },
             // route level code-splitting
             // this generates a separate chunk (About.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
@@ -21,9 +23,16 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             name: 'not-found',
+            meta: { title: '404 | Not Found' },
             component: NotFoundView
         }
     ]
+})
+
+const DEFAULT_TITLE = 'Currencies'
+router.beforeEach((to, from, next) => {
+    document.title = to.meta.title || DEFAULT_TITLE
+    next()
 })
 
 export default router

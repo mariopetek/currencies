@@ -12,7 +12,7 @@ export default {
 
 <style scoped>
 h1 {
-    color: var(--color-brand);
+    color: var(--color-text);
     font-size: 2.2rem;
     margin-bottom: 1rem;
     font-weight: 600;

@@ -65,82 +65,84 @@ export default {
 
 <template>
     <LoadingSpinner v-if="codesLoading" />
+    <p v-else-if="error" class="error">{{ error }}</p>
     <div v-else class="container">
-        <p v-if="error" class="error">{{ error }}</p>
-        <template v-else>
-            <div class="subcontainer">
-                <div class="inputCurrencySelectionContainer">
-                    <label for="inputCurrencySelection"
-                        >Choose an input currency</label
+        <div class="subcontainer">
+            <div class="inputCurrencySelectionContainer">
+                <label for="inputCurrencySelection"
+                    >Choose an input currency</label
+                >
+                <div class="customSelect">
+                    <select
+                        name="inputCurrencySelection"
+                        id="inputCurrencySelection"
+                        v-model="inputCurrencyCode"
+                        @change="getRates"
                     >
-                    <div class="customSelect">
-                        <select
-                            name="inputCurrencySelection"
-                            id="inputCurrencySelection"
-                            v-model="inputCurrencyCode"
-                            @change="getRates"
+                        <option
+                            v-for="code in codes"
+                            :key="code[0]"
+                            :value="code[0]"
                         >
-                            <option
-                                v-for="code in codes"
-                                :key="code[0]"
-                                :value="code[0]"
-                            >
-                                {{ code[0] }}, {{ code[1] }}
-                            </option>
-                        </select>
-                        <span class="arrow"></span>
-                    </div>
+                            {{ code[0] }}, {{ code[1] }}
+                        </option>
+                    </select>
+                    <span class="arrow"></span>
                 </div>
-                <div class="inputCurrencyInputContainer">
-                    <label for="inputCurrencyInput"
-                        >Enter value to convert</label
-                    >
-                    <input
-                        type="number"
-                        v-model="inputCurrencyValue"
+            </div>
+            <div class="inputCurrencyInputContainer">
+                <label for="inputCurrencyInput">Enter value to convert</label>
+                <input
+                    type="number"
+                    v-model="inputCurrencyValue"
+                    @change="calculateOutputCurrencyValue"
+                    id="inputCurrencyInput"
+                    name="inputCurrencyInput"
+                    placeholder="Enter value to convert"
+                    :disabled="ratesLoading"
+                />
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="subcontainer">
+            <div class="outputCurrencySelectionContainer">
+                <label for="outputCurrencySelection"
+                    >Choose an output currency</label
+                >
+                <div class="customSelect">
+                    <select
+                        name="outputCurrencySelection"
+                        id="outputCurrencySelection"
+                        v-model="outputCurrencyCode"
                         @change="calculateOutputCurrencyValue"
-                        name="inputCurrencyInput"
-                        id="inputCurrencyInput"
-                        :disabled="ratesLoading"
-                    />
-                </div>
-            </div>
-            <div class="separator"></div>
-            <div class="subcontainer">
-                <div class="outputCurrencySelectionContainer">
-                    <label for="outputCurrencySelection"
-                        >Choose an output currency</label
                     >
-                    <div class="customSelect">
-                        <select
-                            name="outputCurrencySelection"
-                            id="outputCurrencySelection"
-                            v-model="outputCurrencyCode"
-                            @change="calculateOutputCurrencyValue"
+                        <option
+                            v-for="code in codes"
+                            :key="code[0]"
+                            :value="code[0]"
                         >
-                            <option
-                                v-for="code in codes"
-                                :key="code[0]"
-                                :value="code[0]"
-                            >
-                                {{ code[0] }}, {{ code[1] }}
-                            </option>
-                        </select>
-                        <span class="arrow"></span>
-                    </div>
-                </div>
-                <div class="outputCurrencyInputContainer">
-                    <label for="outputCurrencyInput">Output value</label>
-                    <input
-                        type="number"
-                        :value="calculateOutputCurrencyValue()"
-                        id="outputCurrencyInput"
-                        name="outputCurrencyInput"
-                        disabled
-                    />
+                            {{ code[0] }}, {{ code[1] }}
+                        </option>
+                    </select>
+                    <span class="arrow"></span>
                 </div>
             </div>
-        </template>
+            <div class="outputCurrencyInputContainer">
+                <label for="outputCurrencyInput">Output value</label>
+                <input
+                    type="text"
+                    :value="
+                        inputCurrencyValue !== ''
+                            ? calculateOutputCurrencyValue()
+                            : ''
+                    "
+                    id="outputCurrencyInput"
+                    name="outputCurrencyInput"
+                    placeholder="Output value"
+                    disabled
+                />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -258,7 +260,7 @@ select:focus {
 }
 .error {
     color: var(--color-error);
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    text-align: center;
 }
 </style>
