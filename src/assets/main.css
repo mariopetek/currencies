@@ -3,8 +3,7 @@
     --color-background-soft: #f8f8f8;
     --color-background-mute: #f2f2f2;
 
-    --color-border: rgba(60, 60, 60, 0.12);
-    --color-border-hover: rgba(60, 60, 60, 0.29);
+    --color-border: #b6b6b6;
 
     --color-heading: #ffffff;
     --color-text: #282828;
@@ -20,8 +19,7 @@
         --color-background-soft: #222222;
         --color-background-mute: #282828;
 
-        --color-border: rgba(84, 84, 84, 0.48);
-        --color-border-hover: rgba(84, 84, 84, 0.65);
+        --color-border: #464646;
 
         --color-heading: #181818;
         --color-text: #f2f2f2;

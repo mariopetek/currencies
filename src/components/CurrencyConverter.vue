@@ -1,13 +1,15 @@
 <script>
 import axios from 'axios'
 import LoadingSpinner from './LoadingSpinner.vue'
+import CurrencySelection from './CurrencySelection.vue'
+
 export default {
     data() {
         return {
             error: null,
-            codesLoading: false,
+            codesLoading: true,
             codes: [],
-            ratesLoading: false,
+            ratesLoading: true,
             rates: {},
             inputCurrencyCode: null,
             outputCurrencyCode: null,
@@ -59,7 +61,7 @@ export default {
             return this.outputCurrencyValue
         }
     },
-    components: { LoadingSpinner }
+    components: { LoadingSpinner, CurrencySelection }
 }
 </script>
 
@@ -72,33 +74,24 @@ export default {
                 <label for="inputCurrencySelection"
                     >Choose an input currency</label
                 >
-                <div class="customSelect">
-                    <select
-                        name="inputCurrencySelection"
-                        id="inputCurrencySelection"
-                        v-model="inputCurrencyCode"
-                        @change="getRates"
-                    >
-                        <option
-                            v-for="code in codes"
-                            :key="code[0]"
-                            :value="code[0]"
-                        >
-                            {{ code[0] }}, {{ code[1] }}
-                        </option>
-                    </select>
-                    <span class="arrow"></span>
-                </div>
+                <CurrencySelection
+                    name="inputCurrencySelection"
+                    id="inputCurrencySelection"
+                    :codes="codes"
+                    :currencyCode="inputCurrencyCode"
+                    @change-handler="getRates"
+                    @update:currency-code="inputCurrencyCode = $event"
+                />
             </div>
             <div class="inputCurrencyInputContainer">
-                <label for="inputCurrencyInput">Enter value to convert</label>
+                <label for="inputCurrencyInput">Value to convert</label>
                 <input
                     type="number"
                     v-model="inputCurrencyValue"
                     @change="calculateOutputCurrencyValue"
                     id="inputCurrencyInput"
                     name="inputCurrencyInput"
-                    placeholder="Enter value to convert"
+                    placeholder="Enter amount"
                     :disabled="ratesLoading"
                 />
             </div>
@@ -109,23 +102,14 @@ export default {
                 <label for="outputCurrencySelection"
                     >Choose an output currency</label
                 >
-                <div class="customSelect">
-                    <select
-                        name="outputCurrencySelection"
-                        id="outputCurrencySelection"
-                        v-model="outputCurrencyCode"
-                        @change="calculateOutputCurrencyValue"
-                    >
-                        <option
-                            v-for="code in codes"
-                            :key="code[0]"
-                            :value="code[0]"
-                        >
-                            {{ code[0] }}, {{ code[1] }}
-                        </option>
-                    </select>
-                    <span class="arrow"></span>
-                </div>
+                <CurrencySelection
+                    name="outputCurrencySelection"
+                    id="outputCurrencySelection"
+                    :codes="codes"
+                    :currencyCode="outputCurrencyCode"
+                    @change-handler="calculateOutputCurrencyValue"
+                    @update:currency-code="outputCurrencyCode = $event"
+                />
             </div>
             <div class="outputCurrencyInputContainer">
                 <label for="outputCurrencyInput">Output value</label>
@@ -138,7 +122,7 @@ export default {
                     "
                     id="outputCurrencyInput"
                     name="outputCurrencyInput"
-                    placeholder="Output value"
+                    placeholder="Conversion result"
                     disabled
                 />
             </div>
@@ -199,6 +183,9 @@ input {
     color: var(--color-text);
     transition: background-color 0.2s ease-in-out;
 }
+input::placeholder {
+    opacity: 0.6;
+}
 input:hover {
     background-color: var(--color-background-soft);
 }
@@ -210,57 +197,11 @@ input:focus {
 input:disabled {
     border: 1px solid var(--color-background-soft);
     background-color: var(--color-background-soft);
-    width: fit-content;
-}
-.customSelect {
-    position: relative;
-}
-.arrow {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 3rem;
-    height: 100%;
-    pointer-events: none;
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    border: 1px solid var(--color-border);
-    --arrow-size: 0.4rem;
-}
-.arrow::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-left: var(--arrow-size) solid transparent;
-    border-right: var(--arrow-size) solid transparent;
-    border-top: var(--arrow-size) solid var(--color-text);
-}
-select {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    background-color: var(--color-background-mute);
-    padding: 0.5rem 3.5rem 0.5rem 0.5rem;
-    font-size: 1rem;
-    font-family: inherit;
-    color: var(--color-text);
-    width: 100%;
-    transition: background-color 0.2s ease-in-out;
-}
-select:hover {
-    cursor: pointer;
-    background-color: var(--color-background-soft);
-}
-select:focus {
-    border-color: var(--color-brand);
-    outline: 2px solid var(--color-brand);
 }
 .error {
     color: var(--color-error);
     font-size: 1.5rem;
     text-align: center;
+    padding: 1rem;
 }
 </style>
