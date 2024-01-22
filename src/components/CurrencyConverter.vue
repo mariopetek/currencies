@@ -2,6 +2,9 @@
 import axios from 'axios'
 import LoadingSpinner from './LoadingSpinner.vue'
 import CurrencySelection from './CurrencySelection.vue'
+import { useConverterStore } from '@/stores/converter'
+import ErrorMessage from './ErrorMessage.vue'
+import LineSeparator from './LineSeparator.vue'
 
 export default {
     data() {
@@ -11,10 +14,7 @@ export default {
             codes: [],
             ratesLoading: true,
             rates: {},
-            inputCurrencyCode: null,
-            outputCurrencyCode: null,
-            inputCurrencyValue: 0,
-            outputCurrencyValue: 0
+            converterStore: useConverterStore()
         }
     },
     mounted() {
@@ -28,12 +28,17 @@ export default {
                     `${import.meta.env.VITE_API_BASE_URL}/codes`
                 )
                 this.codes = codesData['supported_codes']
-                this.inputCurrencyCode = this.codes[0][0]
-                this.outputCurrencyCode = this.codes[0][0]
+                if (
+                    !this.converterStore.inputCurrencyCode ||
+                    !this.converterStore.outputCurrencyCode
+                ) {
+                    this.converterStore.setInputCurrencyCode(this.codes[0][0])
+                    this.converterStore.setOutputCurrencyCode(this.codes[0][0])
+                }
                 await this.getRates()
             } catch (error) {
-                console.error('Error fetching data:', error)
                 this.error = 'Error fetching data. Please try again.'
+                console.error(this.error)
             } finally {
                 this.codesLoading = false
             }
@@ -43,31 +48,45 @@ export default {
             try {
                 const { data: ratesData } = await axios.get(
                     `${import.meta.env.VITE_API_BASE_URL}/latest/${
-                        this.inputCurrencyCode
+                        this.converterStore.inputCurrencyCode
                     }`
                 )
                 this.rates = ratesData['conversion_rates']
                 this.calculateOutputCurrencyValue()
             } catch (error) {
-                console.error('Error fetching data:', error)
                 this.error = 'Error fetching data. Please try again.'
+                console.error(this.error)
             } finally {
                 this.ratesLoading = false
             }
         },
+        handleInputCurrencyValueChange(event) {
+            this.converterStore.setInputCurrencyValue(event.target.value)
+            this.calculateOutputCurrencyValue()
+        },
+        handleOutputCurrencyCodeChange(event) {
+            this.converterStore.setOutputCurrencyCode(event)
+            this.calculateOutputCurrencyValue()
+        },
         calculateOutputCurrencyValue() {
-            this.outputCurrencyValue =
-                this.inputCurrencyValue * this.rates[this.outputCurrencyCode]
-            return this.outputCurrencyValue
+            this.converterStore.setOutputCurrencyValue(
+                Number(this.converterStore.inputCurrencyValue) *
+                    this.rates[this.converterStore.outputCurrencyCode]
+            )
         }
     },
-    components: { LoadingSpinner, CurrencySelection }
+    components: {
+        LoadingSpinner,
+        CurrencySelection,
+        ErrorMessage,
+        LineSeparator
+    }
 }
 </script>
 
 <template>
     <LoadingSpinner v-if="codesLoading" />
-    <p v-else-if="error" class="error">{{ error }}</p>
+    <ErrorMessage v-else-if="error" :message="error" />
     <div v-else class="container">
         <div class="subcontainer">
             <div class="inputCurrencySelectionContainer">
@@ -78,17 +97,19 @@ export default {
                     name="inputCurrencySelection"
                     id="inputCurrencySelection"
                     :codes="codes"
-                    :currencyCode="inputCurrencyCode"
+                    :currencyCode="converterStore.inputCurrencyCode"
                     @change-handler="getRates"
-                    @update:currency-code="inputCurrencyCode = $event"
+                    @update:currency-code="
+                        converterStore.setInputCurrencyCode($event)
+                    "
                 />
             </div>
             <div class="inputCurrencyInputContainer">
                 <label for="inputCurrencyInput">Value to convert</label>
                 <input
                     type="number"
-                    v-model="inputCurrencyValue"
-                    @change="calculateOutputCurrencyValue"
+                    :value="converterStore.inputCurrencyValue"
+                    @input="handleInputCurrencyValueChange($event)"
                     id="inputCurrencyInput"
                     name="inputCurrencyInput"
                     placeholder="Enter amount"
@@ -96,7 +117,7 @@ export default {
                 />
             </div>
         </div>
-        <div class="separator"></div>
+        <LineSeparator />
         <div class="subcontainer">
             <div class="outputCurrencySelectionContainer">
                 <label for="outputCurrencySelection"
@@ -106,9 +127,11 @@ export default {
                     name="outputCurrencySelection"
                     id="outputCurrencySelection"
                     :codes="codes"
-                    :currencyCode="outputCurrencyCode"
+                    :currencyCode="converterStore.outputCurrencyCode"
                     @change-handler="calculateOutputCurrencyValue"
-                    @update:currency-code="outputCurrencyCode = $event"
+                    @update:currency-code="
+                        handleOutputCurrencyCodeChange($event)
+                    "
                 />
             </div>
             <div class="outputCurrencyInputContainer">
@@ -116,8 +139,8 @@ export default {
                 <input
                     type="text"
                     :value="
-                        inputCurrencyValue !== ''
-                            ? calculateOutputCurrencyValue()
+                        converterStore.inputCurrencyValue !== ''
+                            ? converterStore.outputCurrencyValue
                             : ''
                     "
                     id="outputCurrencyInput"
@@ -144,21 +167,12 @@ export default {
     gap: 1rem;
 }
 .inputCurrencySelectionContainer,
-.outputCurrencySelectionContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
 .inputCurrencyInputContainer,
+.outputCurrencySelectionContainer,
 .outputCurrencyInputContainer {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-}
-.separator {
-    height: 1px;
-    background-color: var(--color-border);
-    margin: 1rem 0;
 }
 label {
     font-weight: 600;
@@ -197,11 +211,5 @@ input:focus {
 input:disabled {
     border: 1px solid var(--color-background-soft);
     background-color: var(--color-background-soft);
-}
-.error {
-    color: var(--color-error);
-    font-size: 1.5rem;
-    text-align: center;
-    padding: 1rem;
 }
 </style>

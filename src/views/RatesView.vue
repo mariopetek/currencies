@@ -1,7 +1,10 @@
 <script>
+import ErrorMessage from '@/components/ErrorMessage.vue'
+import LineSeparator from '@/components/LineSeparator.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 import RateCard from '@/components/RateCard.vue'
 import axios from 'axios'
+
 export default {
     data() {
         return {
@@ -25,8 +28,8 @@ export default {
                     this.rates[code] = ratesData
                 }
             } catch (error) {
-                console.error('Error fetching data:', error)
                 this.error = 'Error fetching data. Please try again.'
+                console.error(this.error)
             } finally {
                 this.isLoading = false
             }
@@ -53,20 +56,20 @@ export default {
             })
         }
     },
-    components: { LoadingSpinner, RateCard }
+    components: { LoadingSpinner, RateCard, ErrorMessage, LineSeparator }
 }
 </script>
 
 <template>
     <h1>Conversion rates</h1>
     <LoadingSpinner v-if="isLoading" />
-    <p v-else-if="error" class="error">{{ error }}</p>
+    <ErrorMessage v-else-if="error" :message="error" />
     <template v-else>
         <p class="info">
             Conversion rates for the 5 most traded currencies in the world.
         </p>
         <div v-for="code1 in mostPopular" :key="code1" class="container">
-            <div class="separator"></div>
+            <LineSeparator />
             <h2>{{ code1 }} {{ getCurrencySymbol(code1) }}</h2>
             <p>Last updated: {{ formatTimeUpdated(code1) }}</p>
             <div class="subcontainer">
@@ -106,16 +109,5 @@ h2 {
     grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
     gap: 1rem;
     margin: 0.85rem 0;
-}
-.separator {
-    height: 1px;
-    background-color: var(--color-border);
-    margin: 1rem 0;
-}
-.error {
-    color: var(--color-error);
-    font-size: 1.5rem;
-    text-align: center;
-    padding: 1rem;
 }
 </style>

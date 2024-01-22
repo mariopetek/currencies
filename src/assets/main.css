@@ -8,9 +8,10 @@
     --color-heading: #ffffff;
     --color-text: #282828;
 
+    --color-error: #ffb4b4;
+
     --border-radius: 0.35rem;
     --color-brand: #f85a40;
-    --color-error: #a70800;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,6 +24,8 @@
 
         --color-heading: #181818;
         --color-text: #f2f2f2;
+
+        --color-error: #7f1d1d;
     }
 }
 

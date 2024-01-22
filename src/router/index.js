@@ -23,7 +23,7 @@ const router = createRouter({
         {
             path: '/:pathMatch(.*)*',
             name: 'not-found',
-            meta: { title: '404 | Not Found' },
+            meta: { title: 'Currencies | Not Found' },
             component: NotFoundView
         }
     ]
