@@ -52,18 +52,6 @@ export default {
 .customSelect {
     position: relative;
 }
-.arrow::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    border-left: var(--arrow-size) solid transparent;
-    border-right: var(--arrow-size) solid transparent;
-    border-top: var(--arrow-size) solid var(--color-text);
-}
 select {
     appearance: none;
     border: 1px solid var(--color-border);
@@ -91,8 +79,18 @@ select:focus {
     width: 3rem;
     height: 100%;
     pointer-events: none;
-    border-radius: 0 var(--border-radius) var(--border-radius) 0;
-    border: 1px solid var(--color-border);
     --arrow-size: 0.4rem;
+}
+.arrow::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-left: var(--arrow-size) solid transparent;
+    border-right: var(--arrow-size) solid transparent;
+    border-top: var(--arrow-size) solid var(--color-text);
 }
 </style>
