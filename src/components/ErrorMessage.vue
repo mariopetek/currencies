@@ -8,6 +8,7 @@ export default {
     }
 }
 </script>
+
 <template>
     <div class="errorContainer">
         <div class="iconContainer">

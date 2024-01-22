@@ -4,6 +4,7 @@ export default {
     components: { ErrorMessage }
 }
 </script>
+
 <template>
     <h1>404 - Not found</h1>
     <ErrorMessage message="The page you are looking for does not exist." />
