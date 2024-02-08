@@ -2,29 +2,29 @@ import { defineStore } from 'pinia'
 
 export const useConverterStore = defineStore('converter', {
     state: () => ({
-        inputCode: null,
-        outputCode: null,
-        inputValue: 0,
-        outputValue: 0
+        firstCode: null,
+        secondCode: null,
+        firstValue: 0,
+        secondValue: 0
     }),
     getters: {
-        inputCurrencyCode: state => state.inputCode,
-        outputCurrencyCode: state => state.outputCode,
-        inputCurrencyValue: state => state.inputValue,
-        outputCurrencyValue: state => state.outputValue
+        firstCurrencyCode: state => state.firstCode,
+        secondCurrencyCode: state => state.secondCode,
+        firstCurrencyValue: state => state.firstValue,
+        secondCurrencyValue: state => state.secondValue
     },
     actions: {
-        setInputCurrencyCode(code) {
-            this.inputCode = code
+        setFirstCurrencyCode(code) {
+            this.firstCode = code
         },
-        setOutputCurrencyCode(code) {
-            this.outputCode = code
+        setSecondCurrencyCode(code) {
+            this.secondCode = code
         },
-        setInputCurrencyValue(value) {
-            this.inputValue = value
+        setFirstCurrencyValue(value) {
+            this.firstValue = value
         },
-        setOutputCurrencyValue(value) {
-            this.outputValue = value
+        setSecondCurrencyValue(value) {
+            this.secondValue = value
         }
     }
 })

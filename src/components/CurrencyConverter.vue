@@ -29,11 +29,11 @@ export default {
                 )
                 this.codes = codesData['supported_codes']
                 if (
-                    !this.converterStore.inputCurrencyCode ||
-                    !this.converterStore.outputCurrencyCode
+                    !this.converterStore.firstCurrencyCode ||
+                    !this.converterStore.secondCurrencyCode
                 ) {
-                    this.converterStore.setInputCurrencyCode(this.codes[0][0])
-                    this.converterStore.setOutputCurrencyCode(this.codes[0][0])
+                    this.converterStore.setFirstCurrencyCode(this.codes[0][0])
+                    this.converterStore.setSecondCurrencyCode(this.codes[0][0])
                 }
                 await this.getRates()
             } catch (error) {
@@ -48,11 +48,11 @@ export default {
             try {
                 const { data: ratesData } = await axios.get(
                     `${import.meta.env.VITE_API_BASE_URL}/latest/${
-                        this.converterStore.inputCurrencyCode
+                        this.converterStore.firstCurrencyCode
                     }`
                 )
                 this.rates = ratesData['conversion_rates']
-                this.calculateOutputCurrencyValue()
+                this.calculateSecondCurrencyValue()
             } catch (error) {
                 this.error = 'Error fetching data. Please try again.'
                 console.error(this.error)
@@ -60,19 +60,29 @@ export default {
                 this.ratesLoading = false
             }
         },
-        handleInputCurrencyValueChange(event) {
-            this.converterStore.setInputCurrencyValue(event.target.value)
-            this.calculateOutputCurrencyValue()
+        handleFirstCurrencyValueChange(event) {
+            this.converterStore.setFirstCurrencyValue(event.target.value)
+            this.calculateSecondCurrencyValue()
         },
-        handleOutputCurrencyCodeChange(event) {
-            this.converterStore.setOutputCurrencyCode(event)
-            this.calculateOutputCurrencyValue()
+        handleSecondCurrencyValueChange(event) {
+            this.converterStore.setSecondCurrencyValue(event.target.value)
+            this.calculateFirstCurrencyValue()
         },
-        calculateOutputCurrencyValue() {
-            this.converterStore.setOutputCurrencyValue(
-                Number(this.converterStore.inputCurrencyValue) *
-                    this.rates[this.converterStore.outputCurrencyCode]
-            )
+        calculateFirstCurrencyValue() {
+            this.converterStore.secondCurrencyValue === ''
+                ? this.converterStore.setFirstCurrencyValue('')
+                : this.converterStore.setFirstCurrencyValue(
+                      Number(this.converterStore.secondCurrencyValue) /
+                          this.rates[this.converterStore.secondCurrencyCode]
+                  )
+        },
+        calculateSecondCurrencyValue() {
+            this.converterStore.firstCurrencyValue === ''
+                ? this.converterStore.setSecondCurrencyValue('')
+                : this.converterStore.setSecondCurrencyValue(
+                      Number(this.converterStore.firstCurrencyValue) *
+                          this.rates[this.converterStore.secondCurrencyCode]
+                  )
         }
     },
     components: {
@@ -89,64 +99,53 @@ export default {
     <ErrorMessage v-else-if="error" :message="error" />
     <div v-else class="container">
         <div class="subcontainer">
-            <div class="inputCurrencySelectionContainer">
-                <label for="inputCurrencySelection"
-                    >Choose an input currency</label
-                >
+            <h2>Input currency</h2>
+            <div class="currencySelectionContainer">
                 <CurrencySelection
-                    name="inputCurrencySelection"
-                    id="inputCurrencySelection"
                     :codes="codes"
-                    :currencyCode="converterStore.inputCurrencyCode"
+                    :currencyCode="converterStore.firstCurrencyCode"
                     @change-handler="getRates"
                     @update:currency-code="
-                        converterStore.setInputCurrencyCode($event)
+                        converterStore.setFirstCurrencyCode($event)
                     "
+                    name="firstCurrencyCode"
                 />
             </div>
-            <div class="inputCurrencyInputContainer">
-                <label for="inputCurrencyInput">Value to convert</label>
+            <div class="currencyInputContainer">
                 <input
                     type="number"
-                    :value="converterStore.inputCurrencyValue"
-                    @input="handleInputCurrencyValueChange($event)"
-                    id="inputCurrencyInput"
-                    name="inputCurrencyInput"
-                    placeholder="Enter amount"
+                    :value="converterStore.firstCurrencyValue"
+                    @input="handleFirstCurrencyValueChange($event)"
+                    placeholder="Amount in selected input currency"
                     :disabled="ratesLoading"
+                    name="firstCurrencyValue"
+                    title="Enter amount"
                 />
             </div>
         </div>
         <LineSeparator />
         <div class="subcontainer">
-            <div class="outputCurrencySelectionContainer">
-                <label for="outputCurrencySelection"
-                    >Choose an output currency</label
-                >
+            <h2>Output currency</h2>
+            <div class="currencySelectionContainer">
                 <CurrencySelection
-                    name="outputCurrencySelection"
-                    id="outputCurrencySelection"
                     :codes="codes"
-                    :currencyCode="converterStore.outputCurrencyCode"
-                    @change-handler="calculateOutputCurrencyValue"
+                    :currencyCode="converterStore.secondCurrencyCode"
+                    @change-handler="calculateSecondCurrencyValue"
                     @update:currency-code="
-                        handleOutputCurrencyCodeChange($event)
+                        converterStore.setSecondCurrencyCode($event)
                     "
+                    name="secondCurrencyCode"
                 />
             </div>
-            <div class="outputCurrencyInputContainer">
-                <label for="outputCurrencyInput">Output value</label>
+            <div class="currencyInputContainer">
                 <input
-                    type="text"
-                    :value="
-                        converterStore.inputCurrencyValue !== ''
-                            ? converterStore.outputCurrencyValue
-                            : ''
-                    "
-                    id="outputCurrencyInput"
-                    name="outputCurrencyInput"
-                    placeholder="Conversion result"
-                    disabled
+                    type="number"
+                    :value="converterStore.secondCurrencyValue"
+                    @input="handleSecondCurrencyValueChange($event)"
+                    placeholder="Amount in selected output currency"
+                    :disabled="ratesLoading"
+                    name="secondCurrencyValue"
+                    title="Enter amount"
                 />
             </div>
         </div>
@@ -166,17 +165,15 @@ export default {
     flex-direction: column;
     gap: 1rem;
 }
-.inputCurrencySelectionContainer,
-.inputCurrencyInputContainer,
-.outputCurrencySelectionContainer,
-.outputCurrencyInputContainer {
+h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+.currencySelectionContainer,
+.currencyInputContainer {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-}
-label {
-    font-weight: 600;
-    font-size: 1.125rem;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

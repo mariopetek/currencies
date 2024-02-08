@@ -9,8 +9,15 @@ import { RouterLink } from 'vue-router'
             <h2>Currencies</h2>
         </div>
         <nav>
-            <RouterLink to="/" active-class="active">Converter</RouterLink>
-            <RouterLink to="/rates" active-class="active">Rates</RouterLink>
+            <RouterLink to="/" active-class="active" title="Currency converter"
+                >Converter</RouterLink
+            >
+            <RouterLink
+                to="/rates"
+                active-class="active"
+                title="Conversion rates"
+                >Rates</RouterLink
+            >
         </nav>
     </header>
 </template>

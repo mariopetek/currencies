@@ -5,10 +5,6 @@ export default {
             type: String,
             required: true
         },
-        id: {
-            type: String,
-            required: true
-        },
         currencyCode: {
             type: String,
             required: true
@@ -39,7 +35,12 @@ export default {
 
 <template>
     <div class="customSelect">
-        <select :name="name" :id="id" v-model="value" @change="changeHandler">
+        <select
+            :name="name"
+            v-model="value"
+            @change="changeHandler"
+            title="Select currency code"
+        >
             <option v-for="code in codes" :key="code[0]" :value="code[0]">
                 {{ code[0] }}, {{ code[1] }}
             </option>

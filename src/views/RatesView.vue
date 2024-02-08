@@ -34,11 +34,11 @@ export default {
                 this.isLoading = false
             }
         },
-        getCurrencySymbol(currency) {
+        getCurrencySymbol(code) {
             return (0)
                 .toLocaleString('en-US', {
                     style: 'currency',
-                    currency,
+                    currency: code,
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 })

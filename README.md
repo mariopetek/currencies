@@ -6,7 +6,7 @@ Developed as part of Advanced Web Software Development course at Faculty of Elec
 
 ## Tools
 
-Application is built with [Vue.js](https://vuejs.org/) framework using official [Vue Router](https://router.vuejs.org/) for routing and [Pinia](https://pinia.vuejs.org/) for global store. Created project is using build setup based on [Vite](https://vitejs.dev/) that makes development and deployment easier.
+Application code is written using [Vue.js](https://vuejs.org/) framework with official [Vue Router](https://router.vuejs.org/) for routing and [Pinia](https://pinia.vuejs.org/) for global store. Created project is using build setup based on [Vite](https://vitejs.dev/) that makes development and deployment easier.
 
 All components are using Options API for JavaScript logic definition. Feching inside components is done using [Axios](https://axios-http.com/docs/intro) library and all the data is gathered from [EchangeRate-API](https://app.exchangerate-api.com/).
 
