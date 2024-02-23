@@ -22,7 +22,7 @@ Deployment is managed with [Vercel](https://vercel.com/).
 
 ```sh
 git clone https://github.com/mariopetek/currencies.git
-cd currencies/
+cd currencies
 npm install
 ```
 
